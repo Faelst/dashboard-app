@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Home, Settings, User } from 'lucide-react';
+import { Home, Settings, Building, User } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
 const menuItems = [
   { label: 'Dashboard', href: '/', icon: <Home size={20} /> },
   { label: 'Usuários', href: '/users', icon: <User size={20} /> },
+  { label: 'E. Comercial', href: '/comercial-entities', icon: <Building size={20} /> },
   { label: 'Configurações', href: '/configuracoes', icon: <Settings size={20} /> },
 ];
 

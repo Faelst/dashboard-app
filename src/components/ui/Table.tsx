@@ -18,6 +18,8 @@ type GenericTableProps<T> = {
   hasViewer?: boolean;
   hasEdit?: boolean;
   hasDeleted?: boolean;
+  onClickViewDetails?: (row: T) => void;
+  onClickEdit?: (row: T) => void;
 };
 
 function Table<T extends object>({
@@ -30,6 +32,7 @@ function Table<T extends object>({
   hasViewer = false,
   hasEdit = false,
   hasDeleted = false,
+  onClickViewDetails,
 }: GenericTableProps<T>) {
   const totalPages = Math.ceil(total / pageSize);
 
@@ -80,7 +83,11 @@ function Table<T extends object>({
                   <div className="flex justify-center gap-2">
                     {hasViewer && (
                       <button
-                        onClick={() => console.log('Visualizar', row)}
+                        onClick={() => {
+                          if (onClickViewDetails) {
+                            onClickViewDetails(row);
+                          }
+                        }}
                         className="text-blue-500 hover:text-blue-700 transition-colors"
                         title="Visualizar"
                       >

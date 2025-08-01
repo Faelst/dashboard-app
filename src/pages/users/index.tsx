@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -6,9 +7,10 @@ import { SearchUserSchema, searchUserSchemaResolver } from '@/schemas/searchUser
 import Button from '@/components/ui/Button';
 import Table, { Column } from '@/components/ui/Table';
 import { useEffect, useState } from 'react';
-import { UserSearchForm } from '../components/forms/UserSearchForm';
-import { PageHeader } from '../components/PageHeader';
-import { UserRegistrationModal } from '../components/UserRegistrationModal';
+import { UserSearchForm } from '@/components/forms/UserSearchForm';
+import { PageHeader } from '@/components/PageHeader';
+import { UserRegistrationModal } from '@/components/UserRegistrationModal';
+import { UserDetailsModal } from '../../components/UserDetailsModal';
 
 const customers = [
   {
@@ -42,22 +44,35 @@ const columns: Column<(typeof customers)[number] & { actions?: unknown }>[] = [
   },
 ];
 
-export default function Home() {
+export default function UserPage() {
   const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [isUserDetailsModalOpen, setIsUserDetailsModalOpen] = useState(false);
 
   const {
     register,
+    handleSubmit,
     formState: { errors },
   } = useForm<SearchUserSchema>({
     resolver: searchUserSchemaResolver,
+    defaultValues: {
+      query: '',
+      onlyName: false,
+      onlyEmail: false,
+    },
   });
 
-  const handleSubmit = (data: SearchUserSchema) => {
-    console.log(data);
-  };
+  function handleSearch(data: SearchUserSchema) {
+    console.log('🔍 Dados pesquisados:', data);
+  }
 
   useEffect(() => {}, [page]);
+
+  const openModal = (user: any) => {
+    setSelectedUser(user);
+    setIsUserDetailsModalOpen(true);
+  };
 
   return (
     <main className="min-h-screen flex flex-col items-center py-10">
@@ -66,7 +81,12 @@ export default function Home() {
           <PageHeader title="Usuários" subtitle="Todos os usuários cadastrados" />
 
           <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto items-end">
-            <UserSearchForm onSubmit={handleSubmit} register={register} errors={errors} />
+            <UserSearchForm
+              register={register}
+              handleSubmit={handleSubmit}
+              errors={errors}
+              onSubmit={handleSearch}
+            />
 
             <Button
               type="button"
@@ -86,6 +106,7 @@ export default function Home() {
             pageSize={5}
             total={customers.length}
             onPageChange={(newPage) => setPage(newPage)}
+            onClickViewDetails={(user) => openModal(user)}
             hasViewer
             hasEdit
             hasDeleted
@@ -94,6 +115,14 @@ export default function Home() {
       </div>
 
       <UserRegistrationModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
+      {selectedUser && (
+        <UserDetailsModal
+          isOpen={isUserDetailsModalOpen}
+          onClose={() => setIsUserDetailsModalOpen(false)}
+          user={selectedUser}
+        />
+      )}
     </main>
   );
 }
