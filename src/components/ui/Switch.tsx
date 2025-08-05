@@ -1,7 +1,7 @@
 'use client';
 
 import React, { PropsWithChildren } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 
 interface SwitchProps {
   isActive: boolean;
